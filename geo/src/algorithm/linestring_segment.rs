@@ -210,6 +210,32 @@ mod test {
     fn n_elems() {
         let linestring: LineString = vec![[0.0, 0.0], [1.0, 1.0], [1.0, 2.0], [3.0, 3.0]].into();
         let segments = linestring.line_segmentize(2).unwrap();
-        assert_eq!(segments.0.len(), 2)
+        assert_eq!(segments.0.len(), 2);
+
+        // Test for an edge case that seems to fail:
+        // https://github.com/JosiahParry/rsgeo/issues/28
+        // With the following coordinates:
+        // 324957.69921197, 324957.873557727, 
+        // 324959.863123514, 324961.852683597, 324963.822867622, 324969.636546456, 
+        // 324976.718443977, 324996.443964294, 673670.123131518, 673680.139281405, 
+        // 673686.784106964, 673693.428933452, 673698.960855279, 673709.992098018, 
+        // 673722.114520549, 673742.922904206
+
+        let linestring: LineString = vec![
+            [324957.69921197, 673670.123131518],
+            [324957.873557727, 673680.139281405],
+            [324959.863123514, 673686.784106964],
+            [324961.852683597, 673693.428933452],
+            [324963.822867622, 673698.960855279],
+            [324969.636546456, 673709.992098018],
+            [324976.718443977, 673722.114520549],
+            [324996.443964294, 673742.922904206],
+        ].into();
+        let segments = linestring.line_segmentize(2).unwrap();
+        assert_eq!(segments.0.len(), 2);
+        let segments = linestring.line_segmentize(3).unwrap();
+        assert_eq!(segments.0.len(), 3);
+        let segments = linestring.line_segmentize(4).unwrap();
+        assert_eq!(segments.0.len(), 4);
     }
 }
